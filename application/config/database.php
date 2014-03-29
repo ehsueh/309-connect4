@@ -49,9 +49,12 @@ $active_group = 'default';
 $active_record = TRUE;
 
 $db['default']['hostname'] = '127.0.0.1';
-$db['default']['username'] = 'connect4';
-$db['default']['password'] = 'connect4';
-$db['default']['database'] = 'connect4';  
+/* $db['default']['username'] = 'g2lingra';
+ $db['default']['password'] = '69029733';
+$db['default']['database'] = 'g2lingra';  */
+$db['default']['username'] = 'g3hsuehy';
+$db['default']['password'] = '32123323';
+$db['default']['database'] = 'g3hsuehy';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

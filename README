@@ -1,0 +1,40 @@
+Rules the Users Must Comply To:
+(I.e. we built our connect4 based on these assumptions)
+
+1. User must first log in to the site.
+2. User can then wait for invitation or invite one of the available users.
+3. User can accept or turn down an invitation.
+4. User who sends the invite starts first.
+5. User can only play one match at a time.
+6. User may NOT log out, chicken out  or disappear for whatever reason until the match is over.
+7. User's invitation will be answered eventually. (i.e. we do not timeout invites.)
+
+
+Notes for Coders (Ourselves):
+
+For db use:
+	mysql -h bungle08.cs.toronto.edu -u username -p 
+For testing and debugging:
+	firefox -no-remote -ProfileManager &
+
+1. store state of game in match.board_state as a blob
+2. update user_status table:
+	login: set user status to 2 (available)
+	user1 sends invite to u2: set u1 to 3 (waiting)
+				      u2 to 4 (invited)
+	invite accepted: set status to 5 (playing)
+	invite rejected: set status to 2 (available)
+3. update invite table:
+	when u1 invites u2, an entry in the invite table
+	with status 1 (pending) is created. 
+	change this to 2 (accepted) or 3 (rejected) later
+4. update match table:
+	when invite accepted: create new entry in match table
+	with status 1 (active)
+	change this to 2 (u1win), 3 (u2win) or 4 (tie) later
+
+Other requirements:
+
+- Improve resilience of site: add cpatcha for new account creation
+	use Securimage PHP library
+- Make sure to use AJAX, JSON, JQUERY

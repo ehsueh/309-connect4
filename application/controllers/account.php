@@ -71,19 +71,20 @@ class Account extends CI_Controller {
     
     function createNew() {
     		$this->load->library('form_validation');
-    	    $this->form_validation->set_rules('username', 'Username', 'required|is_unique[user.login]');
-	    	$this->form_validation->set_rules('password', 'Password', 'required');
-	    	$this->form_validation->set_rules('first', 'First', "required");
-	    	$this->form_validation->set_rules('last', 'last', "required");
-	    	$this->form_validation->set_rules('email', 'Email', "required|is_unique[user.email]");
+//     	    $this->form_validation->set_rules('username', 'Username', 'required|is_unique[user.login]');
+// 	    	$this->form_validation->set_rules('password', 'Password', 'required');
+// 	    	$this->form_validation->set_rules('first', 'First', "required");
+// 	    	$this->form_validation->set_rules('last', 'last', "required");
+// 	    	$this->form_validation->set_rules('email', 'Email', "required|is_unique[user.email]");
 	    	
-	    
+	    	//TODO: add securimage validation
 	    	if ($this->form_validation->run() == FALSE)
 	    	{
 	    		$this->load->view('account/newForm');
 	    	}
 	    	else  
 	    	{
+	    		
 	    		$user = new User();
 	    		 
 	    		$user->login = $this->input->post('username');
