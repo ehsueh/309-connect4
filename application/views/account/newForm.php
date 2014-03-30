@@ -47,10 +47,13 @@
 	echo form_label('Email');
 	echo form_error('email');
 	echo form_input('email',set_value('email'),"required");
-	echo '<img id="captcha" src="/securimage/securimage_show.php" alt="CAPTCHA Image" />';
-	echo '<input type="text" name="captcha_code" size="10" maxlength="6" />';
-// 	echo form_input('securimage',set_value('securimage'), "required");
-	echo '<a href="#" onclick="document.getElementById(\'captcha\').src = "/securimage/securimage_show.php?" + Math.random(); return false">[ Different Image ]</a>';
+	
+	// add securimage validation
+	echo '<br /> <img id="captcha" src="' . base_url() . '/securimage/securimage_show.php" alt="Security Image" /> <br />';
+	echo form_label('Text in Security Image');
+	echo form_input('captcha_code', '', "name='captcha_code' size='10' maxlength='6' required");
+	echo "<a href='#' onclick=\"document.getElementById('captcha').src = '" . base_url() . "/securimage/securimage_show.php?' + Math.random(); return false\">[ Different Image ]</a>";
+	
 	echo form_submit('submit', 'Register');
 	echo form_close();
 ?>	
