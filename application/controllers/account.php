@@ -6,6 +6,7 @@ class Account extends CI_Controller {
     		// Call the Controller constructor
 	    	parent::__construct();
 	    	session_start();
+
     }
         
     public function _remap($method, $params = array()) {
@@ -86,14 +87,17 @@ class Account extends CI_Controller {
 	    		
 	    		if ($securimage->check($_POST['captcha_code']) == false)
 	    		{	
-	    			if ($_SESSION['count'] > 3) { // we have a hecker or a really dumb person
+	    			if ( isset($_SESSION['count'] ) && ($_SESSION['count'] > 3)) { // we have a hecker or a really dumb person
 	    				echo $message . "<br /><br />";
 	    				echo "Too many incorrect attempts. <br /> <br />";
 	    				echo "Please go " . anchor('account/newForm', 'Back');
 	    				$_SESSION['count'] = 0; //reset to zero
 	    				exit;
 	    			} else { // we will give the user 4 chances to get the security code right
-		    			$_SESSION['count'] = $_SESSION['count'] + 1;
+	    				if (!isset($_SESSION['count'])) {
+	    					$_SESSION['count'] = 0;
+	    				}
+		    			$_SESSION['count']++;
 		    			echo "<script type='text/javascript'>alert('" . $message . 'Incorrect attempts: ' . $_SESSION['count'] . "');</script>";
 		    			$this->load->view('account/newForm');
 		    		}
