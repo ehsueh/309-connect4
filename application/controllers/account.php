@@ -186,14 +186,17 @@ class Account extends CI_Controller {
 	    			$config['smtp_host']    = 'ssl://smtp.gmail.com';
 	    			$config['smtp_port']    = '465';
 	    			$config['smtp_timeout'] = '7';
-	    			$config['smtp_user']    = 'your gmail user name';
-	    			$config['smtp_pass']    = 'your gmail password';
+ 	    			$config['smtp_user']    = 'your gmail user name';
+ 	    			$config['smtp_pass']    = 'your gmail password';
 	    			$config['charset']    = 'utf-8';
 	    			$config['newline']    = "\r\n";
 	    			$config['mailtype'] = 'text'; // or html
 	    			$config['validation'] = TRUE; // bool whether to validate email or not
 	    			
-		    	  	$this->email->initialize($config);
+	    			// don't actually initialize this configuration
+	    			// don't really wanna share our password with TAs
+	    			// works without initializing
+// 		    	  	$this->email->initialize($config);
 	    			
 	    			$this->email->from('csc309Login@cs.toronto.edu', 'Login App');
 	    			$this->email->to($user->email);
