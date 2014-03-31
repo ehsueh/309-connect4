@@ -1,0 +1,36 @@
+> well... first, figure out what all that code is doing.
+
+============= PERFORMANCE/VISUAL STUFF =============
+> when two users, user1 and user2, start a game, they should see the board and maybe the chat area.
+> board starts out as a blue rectangle, 7 x 6 white holes (7 width, 6 height)
+
+> on user1's (the inviter) side, display: "Please make a move." since inviter starts first
+> on user2's side, display: "Please wait for other player to make a move."
+> This display alternates. So after user1 makes a move, he/she has to wait for user2 to make a move.
+> colours: user1 = red, user2 = yellow
+
+> to make a move, user selects column with left and right keyboard keys. Space will drop the piece.
+> display a green square outlining the column we're on?
+> default could be 0th column
+
+> when user makes a move, a circle of that user's colour will drop down into the column
+> ... so need to keep track of where the "bottom" of that column is
+
+> after every move, check various things:
+	> if that completes a row of 4 or more
+		> alert users of their state
+		> change match state to U1WIN or U2WIN.
+		> alert redirects users to arcade page, ending the game.
+	> else if the number of pieces in the board = 6*7 = 42, there are no more moves
+		> change match state to TIE
+		> alert users of what happened, redirecting to arcade page, ending the game
+	> else (not a winning move)
+		> continue
+
+
+============= ALGORITHMS STUFF ==============
+> checking current board for row of 4
+> checking current board for number of pieces
+	> if == 42, gg.
+
+
