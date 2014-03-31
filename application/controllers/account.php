@@ -6,6 +6,7 @@ class Account extends CI_Controller {
     		// Call the Controller constructor
 	    	parent::__construct();
 	    	session_start();
+
     }
         
     public function _remap($method, $params = array()) {
@@ -71,19 +72,37 @@ class Account extends CI_Controller {
     
     function createNew() {
     		$this->load->library('form_validation');
-//     	    $this->form_validation->set_rules('username', 'Username', 'required|is_unique[user.login]');
-// 	    	$this->form_validation->set_rules('password', 'Password', 'required');
-// 	    	$this->form_validation->set_rules('first', 'First', "required");
-// 	    	$this->form_validation->set_rules('last', 'last', "required");
-// 	    	$this->form_validation->set_rules('email', 'Email', "required|is_unique[user.email]");
-	    	
-	    	//TODO: add securimage validation
+    		
 	    	if ($this->form_validation->run() == FALSE)
 	    	{
 	    		$this->load->view('account/newForm');
-	    	}
-	    	else  
+	    	} 
+	    	else 
 	    	{
+	    		
+	    		// validate securimage only after passing all other validations
+	    		include_once $_SERVER['DOCUMENT_ROOT'] . '/connect4/securimage/securimage.php';
+	    		$securimage = new Securimage();
+	    		$message = "The security code entered was incorrect.";
+	    		
+	    		if ($securimage->check($_POST['captcha_code']) == false)
+	    		{	
+	    			if ( isset($_SESSION['count'] ) && ($_SESSION['count'] > 3)) { // we have a hecker or a really dumb person
+	    				echo $message . "<br /><br />";
+	    				echo "Too many incorrect attempts. <br /> <br />";
+	    				echo "Please go " . anchor('account/newForm', 'Back');
+	    				$_SESSION['count'] = 0; //reset to zero
+	    				exit;
+	    			} else { // we will give the user 4 chances to get the security code right
+	    				if (!isset($_SESSION['count'])) {
+	    					$_SESSION['count'] = 0;
+	    				}
+		    			$_SESSION['count']++;
+		    			echo "<script type='text/javascript'>alert('" . $message . 'Incorrect attempts: ' . $_SESSION['count'] . "');</script>";
+		    			$this->load->view('account/newForm');
+		    		}
+		    		
+	    		} else {
 	    		
 	    		$user = new User();
 	    		 
@@ -100,6 +119,7 @@ class Account extends CI_Controller {
 	    		$error = $this->user_model->insert($user);
 	    		
 	    		$this->load->view('account/loginForm');
+	    		}
 	    	}
     }
 
@@ -166,14 +186,17 @@ class Account extends CI_Controller {
 	    			$config['smtp_host']    = 'ssl://smtp.gmail.com';
 	    			$config['smtp_port']    = '465';
 	    			$config['smtp_timeout'] = '7';
-	    			$config['smtp_user']    = 'your gmail user name';
-	    			$config['smtp_pass']    = 'your gmail password';
+ 	    			$config['smtp_user']    = 'your gmail user name';
+ 	    			$config['smtp_pass']    = 'your gmail password';
 	    			$config['charset']    = 'utf-8';
 	    			$config['newline']    = "\r\n";
 	    			$config['mailtype'] = 'text'; // or html
 	    			$config['validation'] = TRUE; // bool whether to validate email or not
 	    			
-		    	  	$this->email->initialize($config);
+	    			// don't actually initialize this configuration
+	    			// don't really wanna share our password with TAs
+	    			// works without initializing
+// 		    	  	$this->email->initialize($config);
 	    			
 	    			$this->email->from('csc309Login@cs.toronto.edu', 'Login App');
 	    			$this->email->to($user->email);
