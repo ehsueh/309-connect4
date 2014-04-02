@@ -1,8 +1,14 @@
 
 <!DOCTYPE html>
 
+
+
 <html>
+	
 	<head>
+
+	<link rel="stylesheet" type="text/css" href="<?php  echo base_url(); ?>/css/template.css">
+
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
 	<script src="<?= base_url() ?>/js/jquery.timers.js"></script>
 	<script>
@@ -36,17 +42,26 @@
 						}
 					});
 			});
-
+		
 			$('form').submit(function(){
 				var arguments = $(this).serialize();
 				var url = "<?= base_url() ?>board/postMsg";
+				
 				$.post(url,arguments, function (data,textStatus,jqXHR){
 						var conversation = $('[name=conversation]').val();
 						var msg = $('[name=msg]').val();
 						$('[name=conversation]').val(conversation + "\n" + user + ": " + msg);
 						});
+
+				// clear textbox after sending message
+				// doesn't work yet
+				// $('[name=msg]').val("");
 				return false;
+				
+
 				});	
+				
+			    
 		});
 	
 	</script>
@@ -67,8 +82,12 @@
 	?>
 	</div>
 	
-<?php 
+	<div id='board'>
+	Board goes here
+	</div>
 	
+<?php 
+
 	echo form_textarea('conversation');
 	
 	echo form_open();
