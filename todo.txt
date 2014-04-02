@@ -38,4 +38,14 @@
 each col starts from the bottom. This way, when a user drops a piece,
 we can just insert the value at the first empty space found.
 
+> check if match table is updated upon start of match
+> get id from player1
+> use id to update blob
+> pass blob to server
+> check for win on server's side
+> implement what happens when we have a win (win message, play again? quit?.... etc)
+> update match table in db with match info
+> update player2's view with blob
+> update player1's view with id (or blob)
 
+That's pretty much all~~~~~~~~~~~~~~~~
