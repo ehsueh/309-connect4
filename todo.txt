@@ -33,4 +33,9 @@
 > checking current board for number of pieces
 	> if == 42, gg.
 
+> board could be saved as an array sorted by columns:
+[col1 col2 ... col 7]
+each col starts from the bottom. This way, when a user drops a piece,
+we can just insert the value at the first empty space found.
+
 
