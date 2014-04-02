@@ -49,4 +49,20 @@ we can just insert the value at the first empty space found.
 > update player1's view with id (or blob)
 > enforce turn (no consecutive turns)--> show "Waiting for opponent's move".... or "your turn" ... etc
 
+
+
+GRACE can expect:
+Input: 
+- var user //who's move this is
+- an integer in [0,6] //where the user clicked
+Output:
+- a string //updated state of the board
+
+*look at .serialize() to decide how to store the board state
+*check for win
+*
+
+
 That's pretty much all~~~~~~~~~~~~~~~~
+
+
