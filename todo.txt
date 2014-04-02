@@ -47,6 +47,6 @@ we can just insert the value at the first empty space found.
 > update match table in db with match info
 > update player2's view with blob
 > update player1's view with id (or blob)
-> enforce turn (no consecutive turns)--> show "Waiting for opponent's move.... or your turn ... etc)
+> enforce turn (no consecutive turns)--> show "Waiting for opponent's move".... or "your turn" ... etc
 
 That's pretty much all~~~~~~~~~~~~~~~~
