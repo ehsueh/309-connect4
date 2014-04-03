@@ -42,38 +42,34 @@ class Match_model extends CI_Model {
 		return $this->db->update('match',array('match_status_id'=>$status));
 	}
 
-        /* function to receive move, id
-         note: insertable is already checked on client side,
-             so there is definitely space to insert
-         insert move in the table with colour according to id
-        
-         if board has >= 8 pieces on it, check for any wins (1) or full table (2)
-	 if so, update match_status accordingly
-        
-         check if a game has started and get id.
-         insert into db match info:
-          `user1_id` INT NOT NULL ,
-          `user2_id` INT NOT NULL ,
-          `u1_msg` TEXT NULL ,
-          `u2_msg` TEXT NULL ,
-          `board_state` BLOB NULL ,
-          `match_status_id` INT NOT NULL
 
-         if this was first insert of game, get insert id => store as $_SESSION[id]
-        
-         return new table array
-
-        */	
+	// [server] after processing move, update db with board state
+	// $board is passed in as an array! => need to process into blob
+	function updateBoard($id, $board) {
+		$this->db->where('id',$id);
+		$bboard = serialize($board);
+		return $this->db->update('match', array('board_state'=>$bboard));
+	}
 
 
-	/* function win: check for any line of 4s
-	horizontal algorithm:
-
-	vertical algorithm:
-
-	right up diagnoal:
-
-	right down diagonal:
+	/* get board state($id): just use get($id), then get the match state
+	for users to call.
+	returns the status of the board
 	*/
+
+        /* TODO: function win($board)
+	> returns id of winning user if win, -1 otherwise
+	> if there is a winning 4-pieces, return array(id, winning piece)
+
+        check for any line of 4s
+        horizontal algorithm:
+
+        vertical algorithm:
+
+        right up diagnoal:
+
+        right down diagonal:
+        */
+
 }
 ?>

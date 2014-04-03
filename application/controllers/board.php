@@ -138,5 +138,78 @@ class Board extends CI_Controller {
 		error:
 		echo json_encode(array('status'=>'failure','message'=>$errormsg));
  	}
- }
+
+
+	// inserts move into board, and updates the board in the db
+	// checks for win or tie; makes any necessary state changes
+	function makeMove($col) {
+		$this->load->model('user_model');
+		$user = $_SESSION['user'];
+
+		$user = $this->user_model->get($user->login);
+                if ($user->user_status_id != User::PLAYING) {
+                        $errormsg="Not in PLAYING state";
+                        goto error;
+                }
+                // start transactional mode
+                $this->db->trans_begin();
+
+                $match = $this->match_model->getExclusive($user->match_id);
+		$board = unserialize($match->board_state);
+
+		// insert move into board, insert into db
+		array_push($board[$col], $user->id);
+
+
+		// 7:   number of columns (nested arrays)
+		// > 6: number needed for a win
+		$count = count($board, COUNT_RECURSIVE);
+		if ($count > 13) {
+			$this->load->model('match_model');
+
+			// check for win
+			$win = $this->match_model->win($board);
+			if ($win != -1) {
+				$winner = $win[0];
+				$pieces = $win[1];
+
+				// update match status
+				if ($match->user1_id == $winner) {
+					$this->match_model->updateStatus($winner, Match::U1WIN);
+				}
+				else {
+					$this->match_model->updateStatus($winner, Match::U2WIN);
+				}
+				echo json_encode(array('status'=>'win', 
+				    'winner'=>$winner, 'pieces'=>$pieces));
+			}
+
+			// check for tie: board is full: 7 + 42 = 49
+			else if ($count == 49) {
+				echo json_encode(array('status'=>'tie'));
+			}
+		}
+
+		// if we've reached here, it's just a normal move
+		else {
+			echo json_encode(array('status'=>'success'));
+		}
+
+                if ($this->db->trans_status() === FALSE) {
+                        $errormsg = "Transaction error";
+                        goto transactionerror;
+                }
+
+                // if all went well commit changes
+                $this->db->trans_commit();
+                return;
+
+                transactionerror:
+                $this->db->trans_rollback();
+
+                error:
+                echo json_encode(array('status'=>'failure','message'=>$errormsg))	
+	}
+}
+
 
