@@ -60,6 +60,14 @@
 				
 
 				});	
+
+			$('th').click(function(event){
+				var id = event.target.id;
+				// call Grace with id and user
+				alert(id);
+				alert(user);
+			});
+			
 				
 			    
 		});
@@ -81,9 +89,26 @@
 			echo "Wating on " . $otherUser->login;
 	?>
 	</div>
-	
-	<div id='board'>
-	Board goes here
+	<div  id='board'>
+	<table>
+		<tr>
+		<?php 
+		for ($i = 0; $i <7; $i++){
+			echo '<th id="' . $i .'"> &nbsp; </th>';
+		}
+		?>		
+		</tr>
+		
+	<?php 
+		for ($j = 0; $j <5; $j++){
+			echo '<tr>';
+			for ($i = 0; $i <7; $i++){
+				echo '<td> &nbsp; </td>';
+			}
+			echo '</tr>';
+		}
+	?>
+	</table>
 	</div>
 	
 <?php 

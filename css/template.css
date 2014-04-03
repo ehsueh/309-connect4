@@ -1,4 +1,25 @@
 
+table {
+	margin-left: auto;
+	margin-right: auto;
+	border: 4px solid #002255;
+	border-radius: 8px;
+	width: 700px;
+	height: 600px;
+	background-color: #004488;
+}
+
+th:hover{
+	border: 4px solid #FFFF00;
+}
+
+td,th {
+    background-clip: padding-box;
+    border-radius: 160px;
+    background-color: #369;
+    color: #004488;
+    border: 4px solid #003366;
+}​
 
 div#board
 {
