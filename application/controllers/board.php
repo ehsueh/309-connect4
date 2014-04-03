@@ -168,7 +168,7 @@ class Board extends CI_Controller {
 			$this->load->model('match_model');
 
 			// check for win
-			$win = $this->match_model->win($board);
+			$win = $this->match_model->win($board, $col);
 			if ($win != -1) {
 				$winner = $win[0];
 				$pieces = $win[1];
@@ -195,20 +195,20 @@ class Board extends CI_Controller {
 			echo json_encode(array('status'=>'success'));
 		}
 
-                if ($this->db->trans_status() === FALSE) {
-                        $errormsg = "Transaction error";
-                        goto transactionerror;
-                }
+        if ($this->db->trans_status() === FALSE) {
+                $errormsg = "Transaction error";
+                goto transactionerror;
+        }
 
-                // if all went well commit changes
-                $this->db->trans_commit();
-                return;
+        // if all went well commit changes
+        $this->db->trans_commit();
+        return;
 
-                transactionerror:
-                $this->db->trans_rollback();
+        transactionerror:
+        $this->db->trans_rollback();
 
-                error:
-                echo json_encode(array('status'=>'failure','message'=>$errormsg))	
+        error:
+        echo json_encode(array('status'=>'failure','message'=>$errormsg));	
 	}
 }
 

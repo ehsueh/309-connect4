@@ -57,6 +57,9 @@ class Match_model extends CI_Model {
 	returns the status of the board
 	*/
 
+// 	function win($board) {
+// 		// check for horizontal
+// 	}
         /* TODO: function win($board)
 	> returns id of winning user if win, -1 otherwise
 	> if there is a winning 4-pieces, return array(id, winning piece)
