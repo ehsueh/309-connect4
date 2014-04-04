@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 
@@ -94,6 +93,7 @@
 				});	
 
 			$('td').click(function(event){
+				var arguments = $(this).serialize();
 				var url = "<?= base_url() ?>board/makeMove";
 				var id = event.target.id;
 
@@ -102,32 +102,31 @@
 				var row = (id - col) /10;
 
 				//check to make sure column is not full already
-				//i.e. td with id col does not have a space as its text
-				if (userTurn == 1 && $('#' + col).text() == "&nbsp;"){
-					
+				//i.e. td with id col does not have "free" as its text				
+				var state = $('#' + col).text();
+				$('#' + col).text(state);
+				if ((userTurn == 1) && ($('#' + col).text() == state)){
 					userTurn = userTurn * -1;
-					alert(userTurn);
-					for (i = 6; i>=0 <; i--) {
+					for (var i = 5; i>=0 ; i--) {
 						var num = col + i * 10;
-						alert(num);
-						if ($('#' + num).text() == "&nbsp;") {
+						var state1 = $('#' + num).text();
+						if (state1 == state){ // if it's free
 							$('#' + num).text("1");
-							$('#' + num).css('background-color', $userColour);
+							$('#' + num).css('background-color', userColour);
 							break; 
 						}
-						
+					
 					}
-					//not sure if this correctly calls the makeMove function
-					$.post(url,col,function(data, newMove, jqXHR){
+				//not sure if this correctly calls the makeMove function
+				// $.post(url,arguments,function(data, newMove, jqXHR){
 						
-						});
+					// 	});
+
 				}
 
 										
 			});
 			
-				
-			    
 		});
 	
 	</script>
