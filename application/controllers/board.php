@@ -142,22 +142,24 @@ class Board extends CI_Controller {
 
 	// inserts move into board, and updates the board in the db
 	// checks for win or tie; makes any necessary state changes
-	function makeMove($col) {
+	function makeMove() {
+		
 		// TODO: keep track of whose turn it is by session?
 		$this->load->model('user_model');
 		$user = $_SESSION['user'];
 
 		$user = $this->user_model->get($user->login);
-                if ($user->user_status_id != User::PLAYING) {
-                        $errormsg="Not in PLAYING state";
-                        goto error;
-                }
-                // start transactional mode
-                $this->db->trans_begin();
+        if ($user->user_status_id != User::PLAYING) {
+            $errormsg="Not in PLAYING state";
+                goto error;
+        }
+        // start transactional mode
+        $this->db->trans_begin();
 
-               	$match = $this->match_model->getExclusive($user->match_id);
+       	$match = $this->match_model->getExclusive($user->match_id);
 		$board = unserialize($match->board_state);
 
+		$col = $this->input->post('col');
 		// insert move into board, insert into db
 		array_push($board[$col], $user->id);
 
