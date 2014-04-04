@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 
-
-
 <html>
 	
 	<head>
@@ -15,16 +13,17 @@
 		var otherUser = "<?= $otherUser->login ?>";
 		var user = "<?= $user->login ?>";
 		var status = "<?= $status ?>";
-		var otherColour = "#00AAAA"; //0
+		var otherColour = "#00AAAA"; //2
 		var userColour = "#AA00AA"; //1
 		var empty = "#369";
-		var userTurn = "1";
-		
+		var board = "";
+
 		//TODO 
 		//if this is the user who sends the invite, then start with 1, else, -1
 		var userTurn = 1;
 		
 		$(function(){
+
 			$('body').everyTime(2000,function(){
 					if (status == 'waiting') {
 						$.getJSON('<?= base_url() ?>arcade/checkInvitation',function(data, text, jqZHR){
@@ -39,6 +38,7 @@
 								
 						});
 					}
+
 					var url = "<?= base_url() ?>board/getMsg";
 					$.getJSON(url, function (data,text,jqXHR){
 						if (data && data.status=='success') {
@@ -46,33 +46,54 @@
 							var msg = data.message;
 							if (msg.length > 0)
 								$('[name=conversation]').val(conversation + "\n" + otherUser + ": " + msg);
+			
 						}
 					});
-					//get JSON object for opponent user's moves
-					var url = "<?= base_url() ?>board/makeMove";
+
+					// update board
+					var url = "<?= base_url() ?>board/getBoard";
 					$.getJSON(url, function (data,text,jqXHR){
-						if (data && data.status=='win') {
-							//we have a winner!
-							var pieces = data.pieces;
-							var winner = data.winner;
-							$.each(pieces, function(col, row){
-								var id = row * 10 + col;
-				 				$('#' + id).attr('style', 'border: 4px solid #FF0000');
-							});
-							alert(winner + "has won the game!");
-						} 
-						if (data && data.status=='tie') {
-							//tie
-							alert("Tie!");
-						}
 						if (data && data.status=='success') {
-							//just another ordinary move
-							//show it on table
-							//redraw the board
-							userTurn = userTurn * -1;
-							
+							if (board != data.board){ // the other user made a move
+								userTurn = userTurn * -1;
+								board = data.board;
+								for (int i=0; i<42; i++){
+									//update text value of board
+									$('#' + i).text(board[i]);
+									//colour accordingly
+									if (board[i] == 1)
+										$('#' + i).css('style', userColour);
+									if (board[i] == 2)
+										$('#' + i).css('style', otherColour);
+							}
 						}
 					});
+
+					//get JSON object for opponent user's moves
+					// var url = "<?= base_url() ?>board/makeMove";
+					// $.getJSON(url, function (data,text,jqXHR){
+					// 	if (data && data.status=='win') {
+					// 		//we have a winner!
+					// 		var pieces = data.pieces;
+					// 		var winner = data.winner;
+					// 		$.each(pieces, function(col, row){
+					// 			var id = row * 10 + col;
+				 // 				$('#' + id).attr('style', 'border: 4px solid #FF0000');
+					// 		});
+					// 		alert(winner + "has won the game!");
+					// 	} 
+					// 	if (data && data.status=='tie') {
+					// 		//tie
+					// 		alert("Tie!");
+					// 	}
+					// 	if (data && data.status=='success') {
+					// 		//just another ordinary move
+					// 		//show it on table
+					// 		//redraw the board
+					// 		userTurn = userTurn * -1;
+					// 		$('#' + num).text("2");
+					// 	}
+					// });
 			});
 	
 			$('form').submit(function(){
@@ -94,7 +115,6 @@
 				});	
 
 			$('td').click(function(event){
-				var arguments = $(this).serialize();
 				var url = "<?= base_url() ?>board/makeMove";
 				var id = event.target.id;
 
@@ -118,14 +138,62 @@
 						}
 					
 					}
-				//not sure if this correctly calls the makeMove function
-				// $.post(url,arguments,function(data, newMove, jqXHR){
-						
-					// 	});
 
-				}							
+					var arguments = col.serialize();
+					$getJSON(url, arguments, function(data, text, jqXHR) {
+						if (data && data.status == 'win') { // it was a winning move
+							//we have a winner!
+							var pieces = data.pieces;
+							var winner = data.winner;
+							$.each(pieces, function(col, row){
+								var id = row * 10 + col;
+				 				$('#' + id).attr('style', 'border: 4px solid #FF0000');
+							});
+							alert(winner + "has won the game!");
+						}
+						else if (data && data.status=='tie') {
+							//tie
+							alert("Tie!");
+						}
+						else if (data && data.status=='success') {
+							//just another ordinary move
+							//show it on table
+							//redraw the board
+							userTurn = userTurn * -1;
+							$('#' + num).text("2");
+						}
+					});
+					
+					//get JSON object for opponent user's moves
+					// var url = "<?= base_url() ?>board/makeMove";
+					// $.getJSON(url, function (data,text,jqXHR){
+					// 	if (data && data.status=='win') {
+					// 		//we have a winner!
+					// 		var pieces = data.pieces;
+					// 		var winner = data.winner;
+					// 		$.each(pieces, function(col, row){
+					// 			var id = row * 10 + col;
+				 // 				$('#' + id).attr('style', 'border: 4px solid #FF0000');
+					// 		});
+					// 		alert(winner + "has won the game!");
+					// 	} 
+					// 	if (data && data.status=='tie') {
+					// 		//tie
+					// 		alert("Tie!");
+					// 	}
+					// 	if (data && data.status=='success') {
+					// 		//just another ordinary move
+					// 		//show it on table
+					// 		//redraw the board
+					// 		userTurn = userTurn * -1;
+					// 		$('#' + num).text("2");
+					// 	}
+					// });
+
+				}
+
 			});
-			
+				    
 		});
 	
 	</script>
@@ -154,7 +222,7 @@
 			for ($r = 0; $r <7; $r++){
 				//id represents position
 				//name stores info about neighbourhood
-				echo '<td id="' . ($c * 10 + $r) .'" name="00000000"> &nbsp; </td>';
+				echo '<td id="' . ($c * 10 + $r) .'" name="00000000"> free </td>';
 			}
 			echo '</tr>';
 		}
@@ -179,4 +247,3 @@
 </body>
 
 </html>
-

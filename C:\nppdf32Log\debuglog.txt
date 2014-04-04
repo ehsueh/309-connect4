@@ -68,3 +68,24 @@ NPP_GetValue is called
 NPP_GetValue is called
 NPP_GetValue is called
 NPP_GetValue is called
+NPP_GetValue is called
+NPP_GetValue is called
+NPP_GetValue is called
+NPP_GetValue is called
+NPP_Initialize : called
+NPP_GetValue is called
+NPP_SetWindow : called for instance 8c60578
+Window from browser - 60817410
+NPP_SetWindow : called for instance 8c60578
+Window from browser - 60817410
+NPP_NewStream : called for instance 8c60578, stream 8c62cc8, URL http://www.cs.toronto.edu/~robere/csc373h/files/project.pdf, stream size 115509, seekable 0
+NPP_Write : called for instance 8c60578, stream 8c62cc8, offset = 0, length = 102400, streamlength = 115509
+Trying for window attributes
+Trying for query tree
+NPP_Write : will wait for NPP_StreamAsFile
+NPP_Write : called for instance 8c60578, stream 8c62cc8, offset = 102400, length = 13109, streamlength = 115509
+Trying for window attributes
+Trying for query tree
+NPP_Write : will wait for NPP_StreamAsFile
+NPP_StreamAsFile : called for instance 8c60578 and stream 8c62cc8, filename /h/u6/g4/00/g3hsuehy/.opera/cache/g_0004/opr000FJ.tmp
+NPP_DestroyStream : called for instance 8c60578 and stream 8c62cc8
