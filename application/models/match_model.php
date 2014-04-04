@@ -57,9 +57,17 @@ class Match_model extends CI_Model {
 	returns the status of the board
 	*/
 
-// 	function win($board) {
-// 		// check for horizontal
-// 	}
+	function horizontal($board, $col) {
+		// get index of last item in column
+		// check same index in other rows
+		// depending on which column move is in, check 
+	}
+
+	function win($board, $col) {
+		// NOTE: only need to check anything that contains the last item of $col
+
+		// check for horizontal
+	}
         /* TODO: function win($board)
 	> returns id of winning user if win, -1 otherwise
 	> if there is a winning 4-pieces, return array(id, winning piece)

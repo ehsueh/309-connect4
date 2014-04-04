@@ -143,6 +143,7 @@ class Board extends CI_Controller {
 	// inserts move into board, and updates the board in the db
 	// checks for win or tie; makes any necessary state changes
 	function makeMove($col) {
+		// TODO: keep track of whose turn it is by session?
 		$this->load->model('user_model');
 		$user = $_SESSION['user'];
 
@@ -154,7 +155,7 @@ class Board extends CI_Controller {
                 // start transactional mode
                 $this->db->trans_begin();
 
-                $match = $this->match_model->getExclusive($user->match_id);
+               	$match = $this->match_model->getExclusive($user->match_id);
 		$board = unserialize($match->board_state);
 
 		// insert move into board, insert into db
@@ -169,9 +170,12 @@ class Board extends CI_Controller {
 
 			// check for win
 			$win = $this->match_model->win($board, $col);
+			// if win, returns the array with winning pieces --> != -1
+			// if no win, returns -1 
 			if ($win != -1) {
-				$winner = $win[0];
-				$pieces = $win[1];
+				$winner = $user->id;
+				$pieces = $win[1]; // array(col=>row, col=>row, col=>row, col=>row)
+				// process the json with: http://www.w3schools.com/Php/php_arrays.asp
 
 				// update match status
 				if ($match->user1_id == $winner) {
