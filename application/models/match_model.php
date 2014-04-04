@@ -63,11 +63,16 @@ class Match_model extends CI_Model {
 		// depending on which column move is in, check 
 	}
 
-	function win($board, $col) {
-		// NOTE: only need to check anything that contains the last item of $col
+	//modifying the classic connect4 algo
+	//taking  a bitboard from user
+	function win($bitboard, $lastmoveid) {
+		if ($lastmoveid && $lastmove){};
+		// NOTE: only need to ceck anything that contains the last item of $col
 
 		// check for horizontal
 	}
+	
+		
         /* TODO: function win($board)
 	> returns id of winning user if win, -1 otherwise
 	> if there is a winning 4-pieces, return array(id, winning piece)

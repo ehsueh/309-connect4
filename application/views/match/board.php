@@ -16,6 +16,11 @@
 		var otherUser = "<?= $otherUser->login ?>";
 		var user = "<?= $user->login ?>";
 		var status = "<?= $status ?>";
+		var otherColour = "#00AAAA";
+		var userColour = "#AA00AA";
+		//TODO 
+		//if this is the user who sends the invite, then start with 1, else, -1
+		var userTurn = 1;
 		
 		$(function(){
 			$('body').everyTime(2000,function(){
@@ -41,8 +46,32 @@
 								$('[name=conversation]').val(conversation + "\n" + otherUser + ": " + msg);
 						}
 					});
+					//get JSON object for opponent user's moves
+					var url = "<?= base_url() ?>board/makeMove";
+					$.getJSON(url, function (data,text,jqXHR){
+						if (data && data.status=='win') {
+							//we have a winner!
+							var pieces = data.pieces;
+							var winner = data.winner;
+							$.each(pieces, function(col, row){
+								var id = row * 10 + col;
+				 				$('#' + id).attr('style', 'border: 4px solid #FF0000');
+							});
+							alert(winner + "has won the game!");
+						} 
+						if (data && data.status=='tie') {
+							//tie
+							alert("Tie!");
+						}
+						if (data && data.status=='success') {
+							//just another ordinary move
+							//show it on table
+							//redraw the board
+							
+						}
+					});
 			});
-		
+	
 			$('form').submit(function(){
 				var arguments = $(this).serialize();
 				var url = "<?= base_url() ?>board/postMsg";
@@ -58,14 +87,27 @@
 				// $('[name=msg]').val("");
 				return false;
 				
-
 				});	
 
-			$('th').click(function(event){
+			$('td').click(function(event){
+				var url = "<?= base_url() ?>board/makeMove";
 				var id = event.target.id;
-				// call Grace with id and user
-				alert(id);
-				alert(user);
+
+				//location of click in 5*7 matrix
+				var col = (id % 10);
+				var row = (id - col) /10;
+
+				//check to make sure column is not full already
+				//i.e. td with id col does not have a space as its text
+				if (userTurn == 1 && $('#' + col).text() == "&nbsp;"){
+					userTurn = userTurn * -1;
+					//not sure if this correctly calls the makeMove function
+					$.post(url,col,function(data, newMove, jqXHR){
+						
+						});
+				}
+
+										
 			});
 			
 				
@@ -91,26 +133,21 @@
 	</div>
 	<div  id='board'>
 	<table>
-		<tr>
-		<?php 
-		for ($i = 0; $i <7; $i++){
-			echo '<th id="' . $i .'"> &nbsp; </th>';
-		}
-		?>		
-		</tr>
 		
 	<?php 
-		for ($j = 0; $j <5; $j++){
+		for ($c = 0; $c <6; $c++){
 			echo '<tr>';
-			for ($i = 0; $i <7; $i++){
-				echo '<td> &nbsp; </td>';
+			for ($r = 0; $r <7; $r++){
+				//id represents position
+				//name stores info about neighbourhood
+				echo '<td id="' . ($c * 10 + $r) .'" name="00000000"> &nbsp; </td>';
 			}
 			echo '</tr>';
 		}
 	?>
 	</table>
 	</div>
-	
+	 
 <?php 
 
 	echo form_textarea('conversation');
