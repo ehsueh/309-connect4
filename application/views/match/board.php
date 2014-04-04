@@ -16,8 +16,10 @@
 		var otherUser = "<?= $otherUser->login ?>";
 		var user = "<?= $user->login ?>";
 		var status = "<?= $status ?>";
-		var otherColour = "#00AAAA";
-		var userColour = "#AA00AA";
+		var otherColour = "#00AAAA"; //0
+		var userColour = "#AA00AA"; //1
+		var empty = "#369";
+		
 		//TODO 
 		//if this is the user who sends the invite, then start with 1, else, -1
 		var userTurn = 1;
@@ -67,6 +69,7 @@
 							//just another ordinary move
 							//show it on table
 							//redraw the board
+							userTurn = userTurn * -1;
 							
 						}
 					});
@@ -85,6 +88,7 @@
 				// clear textbox after sending message
 				// doesn't work yet
 				// $('[name=msg]').val("");
+
 				return false;
 				
 				});	
@@ -100,7 +104,19 @@
 				//check to make sure column is not full already
 				//i.e. td with id col does not have a space as its text
 				if (userTurn == 1 && $('#' + col).text() == "&nbsp;"){
+					
 					userTurn = userTurn * -1;
+					alert(userTurn);
+					for (i = 6; i>=0 <; i--) {
+						var num = col + i * 10;
+						alert(num);
+						if ($('#' + num).text() == "&nbsp;") {
+							$('#' + num).text("1");
+							$('#' + num).css('background-color', $userColour);
+							break; 
+						}
+						
+					}
 					//not sure if this correctly calls the makeMove function
 					$.post(url,col,function(data, newMove, jqXHR){
 						
