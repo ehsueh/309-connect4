@@ -1,3 +1,25 @@
+CSC309 A3 Connect4
+Grace Lin    996080501
+Emma Hseuh   998968951
+
+Index page is the login page. You must first log in with a valid username and password.
+If you've lost or forgotten your password, you can request for a new salted password
+to be sent to your registered email. If this is your first time
+visiting the site, you can create a new account and log in with the newly created account.
+
+When the game starts with another user, the user who issued the invite goes first.
+After user1 makes a move, it becomes user2's turn to make a move, and vice versa.
+After a move is made, the result of the move will show up for both users.
+There are three possible scenarios:
+	1) the move results in a win
+	2) the move results in a tie
+	3) a regular move; no win or tie resulting from it. 
+
+If there is a win, both users are alerted of who won the match, and the winning 4 pieces are highlighted. 
+If there is a tie, both users are alerted of the tie.
+In both cases (win or tie), the game is over, and both users are redirected to the arcade page.
+
+
 Rules the Users Must Comply To:
 (I.e. we built our connect4 based on these assumptions)
 
@@ -8,7 +30,7 @@ Rules the Users Must Comply To:
 5. User can only play one match at a time.
 6. User may NOT log out, chicken out  or disappear for whatever reason until the match is over.
 7. User's invitation will be answered eventually. (i.e. we do not timeout invites.)
-
+8. User will not refresh the page in the middle of the game.
 
 Notes for Coders (Ourselves):
 

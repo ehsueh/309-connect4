@@ -18,6 +18,7 @@
 		var otherColour = "#00AAAA"; //0
 		var userColour = "#AA00AA"; //1
 		var empty = "#369";
+		var userTurn = "1";
 		
 		//TODO 
 		//if this is the user who sends the invite, then start with 1, else, -1
@@ -122,9 +123,7 @@
 						
 					// 	});
 
-				}
-
-										
+				}							
 			});
 			
 		});
