@@ -139,6 +139,54 @@ class Board extends CI_Controller {
 		echo json_encode(array('status'=>'failure','message'=>$errormsg));
  	}
 
+ 	//postBoard function or include in postMessage
+
+ 	//getBoard
+	function getBoard() {
+ 		$this->load->model('user_model');
+ 		$this->load->model('match_model');
+ 			
+ 		$user = $_SESSION['user'];
+ 		 
+ 		$user = $this->user_model->get($user->login);
+ 		if ($user->user_status_id != User::PLAYING) {	
+ 			$errormsg="Not in PLAYING state";
+ 			goto error;
+ 		}
+ 		// start transactional mode  
+ 		$this->db->trans_begin();
+ 			
+ 		$match = $this->match_model->getExclusive($user->match_id);			
+		$board = unserialize($match->board_state);
+ 		
+ 		if ($match->user1_id == $user->id) {
+			$msg = $match->u2_msg;
+ 			$this->match_model->updateMsgU2($match->id,"");
+ 		}
+ 		else {
+ 			$msg = $match->u1_msg;
+ 			$this->match_model->updateMsgU1($match->id,"");
+ 		}
+
+ 		if ($this->db->trans_status() === FALSE) {
+ 			$errormsg = "Transaction error";
+ 			goto transactionerror;
+ 		}
+ 		
+ 		// if all went well commit changes
+ 		$this->db->trans_commit();
+ 		
+ 		echo json_encode(array('status'=>'success','board'=>$board));
+		return;
+		
+		transactionerror:
+		$this->db->trans_rollback();
+		
+		error:
+		echo json_encode(array('status'=>'failure','message'=>$errormsg));
+ 	}
+
+
 
 	// inserts move into board, and updates the board in the db
 	// checks for win or tie; makes any necessary state changes
