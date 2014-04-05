@@ -89,3 +89,4 @@ Trying for query tree
 NPP_Write : will wait for NPP_StreamAsFile
 NPP_StreamAsFile : called for instance 8c60578 and stream 8c62cc8, filename /h/u6/g4/00/g3hsuehy/.opera/cache/g_0004/opr000FJ.tmp
 NPP_DestroyStream : called for instance 8c60578 and stream 8c62cc8
+NPP_Destroy : called for instance 8c60578

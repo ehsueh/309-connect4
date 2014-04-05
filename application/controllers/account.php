@@ -1,5 +1,10 @@
 <?php
 
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+?>
+<?php
+
 class Account extends CI_Controller {
      
     function __construct() {

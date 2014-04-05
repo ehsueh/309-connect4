@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html>
@@ -17,9 +18,8 @@
 		var userColour = "#AA00AA"; //1
 		var empty = "#369";
 		var board = "";
+		var endgame = false;
 
-		//TODO 
-		//if this is the user who sends the invite, then start with 1, else, -1
 		var userTurn = 1;
 		
 		$(function(){
@@ -65,35 +65,10 @@
 										$('#' + i).css('style', userColour);
 									if (board[i] == 2)
 										$('#' + i).css('style', otherColour);
+								}
 							}
-						}
-					});
+						});
 
-					//get JSON object for opponent user's moves
-					// var url = "<?= base_url() ?>board/makeMove";
-					// $.getJSON(url, function (data,text,jqXHR){
-					// 	if (data && data.status=='win') {
-					// 		//we have a winner!
-					// 		var pieces = data.pieces;
-					// 		var winner = data.winner;
-					// 		$.each(pieces, function(col, row){
-					// 			var id = row * 10 + col;
-				 // 				$('#' + id).attr('style', 'border: 4px solid #FF0000');
-					// 		});
-					// 		alert(winner + "has won the game!");
-					// 	} 
-					// 	if (data && data.status=='tie') {
-					// 		//tie
-					// 		alert("Tie!");
-					// 	}
-					// 	if (data && data.status=='success') {
-					// 		//just another ordinary move
-					// 		//show it on table
-					// 		//redraw the board
-					// 		userTurn = userTurn * -1;
-					// 		$('#' + num).text("2");
-					// 	}
-					// });
 			});
 	
 			$('form').submit(function(){
@@ -143,6 +118,7 @@
 					$getJSON(url, arguments, function(data, text, jqXHR) {
 						if (data && data.status == 'win') { // it was a winning move
 							//we have a winner!
+							endgame = true;
 							var pieces = data.pieces;
 							var winner = data.winner;
 							$.each(pieces, function(col, row){
@@ -154,6 +130,7 @@
 						else if (data && data.status=='tie') {
 							//tie
 							alert("Tie!");
+							endgame = true;
 						}
 						else if (data && data.status=='success') {
 							//just another ordinary move
@@ -163,32 +140,7 @@
 							$('#' + num).text("2");
 						}
 					});
-					
-					//get JSON object for opponent user's moves
-					// var url = "<?= base_url() ?>board/makeMove";
-					// $.getJSON(url, function (data,text,jqXHR){
-					// 	if (data && data.status=='win') {
-					// 		//we have a winner!
-					// 		var pieces = data.pieces;
-					// 		var winner = data.winner;
-					// 		$.each(pieces, function(col, row){
-					// 			var id = row * 10 + col;
-				 // 				$('#' + id).attr('style', 'border: 4px solid #FF0000');
-					// 		});
-					// 		alert(winner + "has won the game!");
-					// 	} 
-					// 	if (data && data.status=='tie') {
-					// 		//tie
-					// 		alert("Tie!");
-					// 	}
-					// 	if (data && data.status=='success') {
-					// 		//just another ordinary move
-					// 		//show it on table
-					// 		//redraw the board
-					// 		userTurn = userTurn * -1;
-					// 		$('#' + num).text("2");
-					// 	}
-					// });
+				
 
 				}
 
@@ -201,8 +153,13 @@
 <body>  
 	<h1>Game Area</h1>
 
+	<?=
+	if endgame
+		echo anchor('arcade/index','(Back to Arcade)');
+	?>
 	<div>
 	Hello <?= $user->fullName() ?>  <?= anchor('account/logout','(Logout)') ?>  
+
 	</div>
 	
 	<div id='status'> 
