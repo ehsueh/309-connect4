@@ -57,7 +57,7 @@
 							if (board != data.board){ // the other user made a move
 								userTurn = userTurn * -1;
 								board = data.board;
-								for (int i=0; i<42; i++){
+								for (var i=0; i<42; i++){
 									//update text value of board
 									$('#' + i).text(board[i]);
 									//colour accordingly
@@ -65,7 +65,9 @@
 										$('#' + i).css('style', userColour);
 									if (board[i] == 2)
 										$('#' + i).css('style', otherColour);
+								}
 							}
+
 						}
 					});
 
@@ -120,7 +122,8 @@
 
 				//location of click in 5*7 matrix
 				var col = (id % 10);
-				var row = (id - col) /10;
+				var num = 0;
+				//var row = (id - col) /10;
 
 				//check to make sure column is not full already
 				//i.e. td with id col does not have "free" as its text				
@@ -129,7 +132,7 @@
 				if ((userTurn == 1) && ($('#' + col).text() == state)){
 					userTurn = userTurn * -1;
 					for (var i = 5; i>=0 ; i--) {
-						var num = col + i * 10;
+						num = col + i * 10;
 						var state1 = $('#' + num).text();
 						if (state1 == state){ // if it's free
 							$('#' + num).text("1");
