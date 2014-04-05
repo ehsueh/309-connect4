@@ -86,7 +86,7 @@ class Account extends CI_Controller {
 	    	{
 	    		
 	    		// validate securimage only after passing all other validations
-	    		include_once $_SERVER['DOCUMENT_ROOT'] . '/connect4/securimage/securimage.php';
+	    		include_once $_SERVER['DOCUMENT_ROOT'] . '/309-connect4/securimage/securimage.php';
 	    		$securimage = new Securimage();
 	    		$message = "The security code entered was incorrect.";
 	    		

@@ -37,6 +37,7 @@ class Match_model extends CI_Model {
 		return $this->db->update('match',array('u2_msg'=>$msg));
 	}
 	
+	// update the status of the match with id $id and status $status
 	function updateStatus($id, $status) {
 		$this->db->where('id',$id);
 		return $this->db->update('match',array('match_status_id'=>$status));
@@ -47,7 +48,7 @@ class Match_model extends CI_Model {
 	// $board is passed in as an array! => need to process into blob
 	function updateBoard($id, $board) {
 		$this->db->where('id',$id);
-		$bboard = serialize($board);
+		$bboard = base64_encode(serialize($board));
 		return $this->db->update('match', array('board_state'=>$bboard));
 	}
 

@@ -49,28 +49,30 @@
 					});
 
 					// update board
-					var url = "<?= base_url() ?>board/getBoard";
+					var url = "<?= base_url() ?>board/getStatus";
 					$.getJSON(url, function (data,text,jqXHR){
-						if (data && data.status=='success') {
-
+						//if (data && data.status=='success') {
+							
 							//alert("userTurn at 56: " + userTurn);
-							if (board != data.board){ // the other user made a move
+							if (board.toString() != data.board.toString()) { // the other user made a move
 
-								userTurn = userTurn * -1;
+								alert("board is: " + board.toString()); 
+								// ,,1,2,2,,2,2,2,2
+								// ,,1,2,2,,2,2,2,2
+								alert("data board is: " + data.board.toString());
+								userTurn *= -1;
+								
 								alert("userTurn at 57: " + userTurn);
-								board = data.board;
-								for (var i=0; i<42; i++){
-									//update text value of board
-									$('#' + i).text(board[i]);
-									//colour accordingly
-									if (board[i] == 1)
-										$('#' + i).css('style', userColour);
-									if (board[i] == 2)
-										$('#' + i).css('style', otherColour);
-								}
+								board = data.board.toString(); // TODO: make sure this works
+							    for (var r = 0; r<6; r++) {
+								    for (var c = 0; c<7; c++){ 
+									    $('#' + ((r-5)*c)).text(data.board[r][c]); 
+									    if (data.board[r][c] == 1) $('#' + ((r-5)*c)).css('style', userColour); 
+									    if (data.board[r][c] == 2) $('#' + ((r-5)*c)).css('style', otherColour);
+								    }
+							    }
 							}
-
-						}
+						
 					});
 
 			});
@@ -97,6 +99,7 @@
 				var url = "<?= base_url() ?>board/makeMove";
 				var id = event.target.id;
 
+				alert("userTurn: " + userTurn);
 				//location of click in 5*7 matrix
 				var col = (id % 10);
 				var num = 0;
@@ -106,7 +109,7 @@
 				var state = $('#' + col).text();
 				$('#' + col).text(state);
 				if ((userTurn == 1) && ($('#' + col).text() == state)){
-					userTurn = userTurn * -1;
+					userTurn *= -1;
 					for (var i = 5; i>=0 ; i--) {
 						num = col + i * 10;
 						var state1 = $('#' + num).text();
@@ -117,40 +120,45 @@
 						}
 					
 					}
-
+					
 					//var arguments = col.serialize();
 					var arguments = {"col": col};
 					$.post(url, arguments, function(data, text, jqXHR) {
-						alert("in post");
-						if (data && data.status == 'win') { // it was a winning move
-							alert("data status is " + data.status);
-							//we have a winner!
-							endgame = true;
-							var pieces = data.pieces;
-							var winner = data.winner;
-							$.each(pieces, function(col, row){
-								var id = row * 10 + col;
-				 				$('#' + id).attr('style', 'border: 4px solid #FF0000');
-							});
-							alert(winner + "has won the game!");
-							window.location.href = '<?= base_url() ?>arcade/index';
-						}
-						else if (data && data.status=='tie') {
-							alert("data status is " + data.status);
-							//tie
-							alert("Tie!");
-							window.location.href = '<?= base_url() ?>arcade/index';
-						}
-						else if (data && data.status=='success') {
-							alert("data status is " + data.status);
-							//just another ordinary move
-							//show it on table
-							//redraw the board
-							userTurn = userTurn * -1;
-							$('#' + num).text("2");
-						}
-						else
-							alert("in else: data status is " + data.status);
+						alert("in post; sending json request to get status");
+						
+						var url = "<?= base_url() ?>board/getStatus";
+						$.getJSON(url, function(data, text, jqXHR) {
+							alert("in getJSON; got some status back");
+							//alert(typeof(data.status));
+							alert("board is: " + data.board);
+							board = data.board.toString();
+							// win
+							if (data && typeof(data.status) == "number") {
+								alert("data status is " + data.status);
+								endgame = true;
+								var pieces = data.pieces;
+								var winner = data.winner;
+								$.each(pieces, function(col, row){
+									var id = row * 10 + col;
+					 				$('#' + id).attr('style', 'border: 4px solid #FF0000');
+								});
+								alert(winner + "has won the game!");
+								window.location.href = '<?= base_url() ?>arcade/index';
+							}
+							// tie
+							else if (data && data.status=='tie') {
+								// alert("data status is " + data.status);
+								alert("Tie!");
+								window.location.href = '<?= base_url() ?>arcade/index';
+							}
+							//normal move
+							else if (data && data.status=='active') {
+								// alert("data status is " + data.status);
+								$('#' + num).text("1");
+							}
+							else
+								alert("in else: data status is " + data.status);
+						});
 					});
 				
 

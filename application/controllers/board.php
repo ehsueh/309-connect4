@@ -198,12 +198,45 @@ class Board extends CI_Controller {
  	}
 
 
+ 	// to check if the game is over
+	function getStatus() {
 
+		$this->load->model('user_model');
+		$this->load->model('match_model');
+		
+		$user = $_SESSION['user'];
+		$user = $this->user_model->get($user->login);
+		if ($user->user_status_id != User::PLAYING) {
+			$errormsg="Not in PLAYING state";
+			goto error;
+		}
+		// start transactional mode
+		//$this->db->trans_begin();
+		
+		$match = $this->match_model->getExclusive($user->match_id);
+		$status_id = $match->match_status_id;
+		$board = unserialize(base64_decode($match->board_state));
+		
+		if ($status_id == 1) 	    // normal move
+			echo json_encode(array('status'=>'active','board'=>$board));
+		else if ($status_id == 2)  // u1win
+			echo json_encode(array('status'=>$match->user1_id,'board'=>$board));
+		else if ($status_id == 3)  // u2win
+			echo json_encode(array('status'=>$match->user2_id,'board'=>$board));
+		else if ($status_id == 4)  // tie
+			echo json_encode(array('status'=>'tie','board'=>$board));
+		return;
+		
+		error:
+		echo json_encode(array('status'=>'failure','message'=>$errormsg));
+		
+	}
+ 	
+	
 	// inserts move into board, and updates the board in the db
 	// checks for win or tie; makes any necessary state changes
 	function makeMove() {
 		
-		// TODO: keep track of whose turn it is by session?
 		$this->load->model('user_model');
 		$this->load->model('match_model');
 		
@@ -219,7 +252,7 @@ class Board extends CI_Controller {
         // get board and insert
        	$match = $this->match_model->getExclusive($user->match_id);
        	// if board was not initialized
-       	if ($match->board_state == NULL) {
+       	if ($match->board_state == null) {
        		$col0 = array();
        		$col1 = array();
        		$col2 = array();
@@ -231,16 +264,13 @@ class Board extends CI_Controller {
        	}
        	// else if board was initialized
        	else {
-			$board = unserialize($match->board_state);
+			$board = unserialize(base64_decode($match->board_state));
        	}
 
 		$col = $this->input->post('col');
-       	echo "<pre>";
-       	die(print_r($col, TRUE));
        	array_push($board[$col], $user->id);
-		//echo "<script type='text/javascript'>alert('{$col}');</script>";
 		
-		$this->match_model->updateBoard($match, $board);
+		$this->match_model->updateBoard($match->id, $board);
 		
 		// 7:   number of columns (nested arrays)
 		// > 6: number needed for a win
@@ -258,25 +288,27 @@ class Board extends CI_Controller {
 
 				// update match status
 				if ($match->user1_id == $winner) {
-					$this->match_model->updateStatus($winner, Match::U1WIN);
+					$this->match_model->updateStatus($user->match_id, Match::U1WIN);
 				}
 				else {
-					$this->match_model->updateStatus($winner, Match::U2WIN);
+					$this->match_model->updateStatus($user->match_id, Match::U2WIN);
 				}
-				echo json_encode(array('status'=>'win', 
-				    'winner'=>$winner, 'pieces'=>$pieces));
+// 				echo json_encode(array('status'=>'win', 
+// 				    'winner'=>$winner, 'pieces'=>$pieces));
 			}
 
 			// check for tie: board is full: 7 + 42 = 49
 			else if ($count == 49) {
-				echo json_encode(array('status'=>'tie'));
+				$this->match_model->updateStatus($user->match_id, Match::TIE);
+				// echo json_encode(array('status'=>'tie'));
 			}
 		}
 
 		// if we've reached here, it's just a normal move
-		else {
-			echo json_encode(array('status'=>'success'));
-		}
+// 		else {
+// 			// don't bother updating status in database
+// 			echo json_encode(array('status'=>'success'));
+// 		}
 
         if ($this->db->trans_status() === FALSE) {
                 $errormsg = "Transaction error";
