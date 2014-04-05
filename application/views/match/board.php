@@ -18,8 +18,6 @@
 		var userColour = "#AA00AA"; //1
 		var empty = "#369";
 		var board = "";
-		var endgame = false;
-
 		var userTurn = 1;
 		
 		$(function(){
@@ -67,13 +65,8 @@
 										$('#' + i).css('style', otherColour);
 								}
 							}
-<<<<<<< HEAD
-						});
-=======
 
-						}
-					});
->>>>>>> a416f47c0b63b72d22cd9508ac9907552614b9f0
+						});
 
 			});
 	
@@ -133,11 +126,12 @@
 				 				$('#' + id).attr('style', 'border: 4px solid #FF0000');
 							});
 							alert(winner + "has won the game!");
+							window.location.href = '<?= base_url() ?>arcade/index';
 						}
 						else if (data && data.status=='tie') {
 							//tie
 							alert("Tie!");
-							endgame = true;
+							window.location.href = '<?= base_url() ?>arcade/index';
 						}
 						else if (data && data.status=='success') {
 							//just another ordinary move
@@ -160,10 +154,6 @@
 <body>  
 	<h1>Game Area</h1>
 
-	<?=
-	if endgame
-		echo anchor('arcade/index','(Back to Arcade)');
-	?>
 	<div>
 	Hello <?= $user->fullName() ?>  <?= anchor('account/logout','(Logout)') ?>  
 
