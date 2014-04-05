@@ -213,6 +213,8 @@ class Board extends CI_Controller {
 		$board = unserialize($match->board_state);
 
 		$col = $this->input->post('col');
+		echo "<script type='text/javascript'>alert('{$product_id}');</script>";
+		
 		// insert move into board, insert into db
 		array_push($board[$col], $user->id);
 
