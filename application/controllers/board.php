@@ -216,15 +216,16 @@ class Board extends CI_Controller {
 		$match = $this->match_model->getExclusive($user->match_id);
 		$status_id = $match->match_status_id;
 		$board = unserialize(base64_decode($match->board_state));
+		$inviter = $match->user1_id;
 		
 		if ($status_id == 1) 	    // normal move
-			echo json_encode(array('status'=>'active','board'=>$board));
+			echo json_encode(array('status'=>'active','board'=>$board, 'inviter'=>$inviter));
 		else if ($status_id == 2)  // u1win
-			echo json_encode(array('status'=>$match->user1_id,'board'=>$board));
+			echo json_encode(array('status'=>$match->user1_id,'board'=>$board, 'inviter'=>$inviter));
 		else if ($status_id == 3)  // u2win
-			echo json_encode(array('status'=>$match->user2_id,'board'=>$board));
+			echo json_encode(array('status'=>$match->user2_id,'board'=>$board, 'inviter'=>$inviter));
 		else if ($status_id == 4)  // tie
-			echo json_encode(array('status'=>'tie','board'=>$board));
+			echo json_encode(array('status'=>'tie','board'=>$board, 'inviter'=>$inviter));
 		return;
 		
 		error:

@@ -48,30 +48,35 @@
 						}
 					});
 
-					// update board
+					// update board: we're still in the auto-check!
 					var url = "<?= base_url() ?>board/getStatus";
 					$.getJSON(url, function (data,text,jqXHR){
 						//if (data && data.status=='success') {
-							
-							//alert("userTurn at 56: " + userTurn);
-							if (board.toString() != data.board.toString()) { // the other user made a move
+						// if user == inviter, treat the first case special:
+						// when board == "" and board != data.board,
+						//     then ONLY update board
+						
+						if (user == data.inviter && board == "" && board != data.board) {
+							board = data.board.toString();
+						}
+						
+						if (board.toString() != data.board.toString() && board != "") { // the other user made a move
 
-								alert("board is: " + board.toString()); 
-								// ,,1,2,2,,2,2,2,2
-								// ,,1,2,2,,2,2,2,2
-								alert("data board is: " + data.board.toString());
-								userTurn *= -1;
-								
-								alert("userTurn at 57: " + userTurn);
-								board = data.board.toString(); // TODO: make sure this works
-							    for (var r = 0; r<6; r++) {
-								    for (var c = 0; c<7; c++){ 
-									    $('#' + ((r-5)*c)).text(data.board[r][c]); 
-									    if (data.board[r][c] == 1) $('#' + ((r-5)*c)).css('style', userColour); 
-									    if (data.board[r][c] == 2) $('#' + ((r-5)*c)).css('style', otherColour);
-								    }
+							alert("58: board is: " + board.toString()); 
+							// ,,1,2,2,,2,2,2,2
+							// ,,1,2,2,,2,2,2,2
+							alert("data board is: " + data.board.toString());
+							
+							userTurn *= -1;
+							board = data.board.toString(); // TODO: make sure this works
+						    for (var r = 0; r<6; r++) {
+							    for (var c = 0; c<7; c++){ 
+								    $('#' + ((r-5)*c)).text(data.board[r][c]); 
+								    if (data.board[r][c] == 1) $('#' + ((r-5)*c)).css('style', userColour); 
+								    if (data.board[r][c] == 2) $('#' + ((r-5)*c)).css('style', otherColour);
 							    }
-							}
+						    }
+						}
 						
 					});
 
@@ -109,7 +114,6 @@
 				var state = $('#' + col).text();
 				$('#' + col).text(state);
 				if ((userTurn == 1) && ($('#' + col).text() == state)){
-					userTurn *= -1;
 					for (var i = 5; i>=0 ; i--) {
 						num = col + i * 10;
 						var state1 = $('#' + num).text();
@@ -121,17 +125,17 @@
 					
 					}
 					
-					//var arguments = col.serialize();
+					// draw, update status
 					var arguments = {"col": col};
 					$.post(url, arguments, function(data, text, jqXHR) {
-						alert("in post; sending json request to get status");
-						
 						var url = "<?= base_url() ?>board/getStatus";
 						$.getJSON(url, function(data, text, jqXHR) {
-							alert("in getJSON; got some status back");
-							//alert(typeof(data.status));
-							alert("board is: " + data.board);
+							//alert("in getJSON; got some status back");
+
+							alert("128: board is: " + data.board);
+							userTurn *= -1;
 							board = data.board.toString();
+							
 							// win
 							if (data && typeof(data.status) == "number") {
 								alert("data status is " + data.status);
