@@ -18,8 +18,8 @@
 		var userColour = "#AA00AA"; //1
 		var empty = "#369";
 		var board = "";
-		var userTurn = 1;
-		
+		var userTurn = "<?= $userTurn ?>";
+		alert("userTurn before anything: " + userTurn);
 		$(function(){
 
 			$('body').everyTime(2000,function(){
@@ -52,8 +52,12 @@
 					var url = "<?= base_url() ?>board/getBoard";
 					$.getJSON(url, function (data,text,jqXHR){
 						if (data && data.status=='success') {
+
+							//alert("userTurn at 56: " + userTurn);
 							if (board != data.board){ // the other user made a move
+
 								userTurn = userTurn * -1;
+								alert("userTurn at 57: " + userTurn);
 								board = data.board;
 								for (var i=0; i<42; i++){
 									//update text value of board
@@ -66,10 +70,11 @@
 								}
 							}
 
-						});
+						}
+					});
 
 			});
-	
+
 			$('form').submit(function(){
 				var arguments = $(this).serialize();
 				var url = "<?= base_url() ?>board/postMsg";
@@ -95,8 +100,7 @@
 				//location of click in 5*7 matrix
 				var col = (id % 10);
 				var num = 0;
-				//var row = (id - col) /10;
-
+				
 				//check to make sure column is not full already
 				//i.e. td with id col does not have "free" as its text				
 				var state = $('#' + col).text();
@@ -114,9 +118,12 @@
 					
 					}
 
-					var arguments = col.serialize();
-					$getJSON(url, arguments, function(data, text, jqXHR) {
+					//var arguments = col.serialize();
+					var arguments = {"col": col};
+					$.post(url, arguments, function(data, text, jqXHR) {
+						alert("in post");
 						if (data && data.status == 'win') { // it was a winning move
+							alert("data status is " + data.status);
 							//we have a winner!
 							endgame = true;
 							var pieces = data.pieces;
@@ -129,17 +136,21 @@
 							window.location.href = '<?= base_url() ?>arcade/index';
 						}
 						else if (data && data.status=='tie') {
+							alert("data status is " + data.status);
 							//tie
 							alert("Tie!");
 							window.location.href = '<?= base_url() ?>arcade/index';
 						}
 						else if (data && data.status=='success') {
+							alert("data status is " + data.status);
 							//just another ordinary move
 							//show it on table
 							//redraw the board
 							userTurn = userTurn * -1;
 							$('#' + num).text("2");
 						}
+						else
+							alert("in else: data status is " + data.status);
 					});
 				
 

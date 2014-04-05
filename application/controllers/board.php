@@ -37,17 +37,23 @@ class Board extends CI_Controller {
 	    	if ($user->user_status_id == User::WAITING) {
 	    		$invite = $this->invite_model->get($user->invite_id);
 	    		$otherUser = $this->user_model->getFromId($invite->user2_id);
+	    		$userTurn = 1;
 	    	}
 	    	else if ($user->user_status_id == User::PLAYING) {
 	    		$match = $this->match_model->get($user->match_id);
-	    		if ($match->user1_id == $user->id)
+	    		if ($match->user1_id == $user->id) {
 	    			$otherUser = $this->user_model->getFromId($match->user2_id);
-	    		else
+	    			$userTurn = -1;
+	    		}
+	    		else {
 	    			$otherUser = $this->user_model->getFromId($match->user1_id);
+	    			$userTurn = 1;
+	    		}
 	    	}
 	    	
 	    	$data['user']=$user;
 	    	$data['otherUser']=$otherUser;
+	    	$data['userTurn']=$userTurn;
 	    	
 	    	switch($user->user_status_id) {
 	    		case User::PLAYING:	
@@ -199,8 +205,9 @@ class Board extends CI_Controller {
 		
 		// TODO: keep track of whose turn it is by session?
 		$this->load->model('user_model');
+		$this->load->model('match_model');
+		
 		$user = $_SESSION['user'];
-
 		$user = $this->user_model->get($user->login);
         if ($user->user_status_id != User::PLAYING) {
             $errormsg="Not in PLAYING state";
@@ -209,21 +216,36 @@ class Board extends CI_Controller {
         // start transactional mode
         $this->db->trans_begin();
 
+        // get board and insert
        	$match = $this->match_model->getExclusive($user->match_id);
-		$board = unserialize($match->board_state);
+       	// if board was not initialized
+       	if ($match->board_state == NULL) {
+       		$col0 = array();
+       		$col1 = array();
+       		$col2 = array();
+       		$col3 = array();
+       		$col4 = array();
+       		$col5 = array();
+       		$col6 = array();
+       		$board = array($col0, $col1, $col2, $col3, $col4, $col5, $col6);
+       	}
+       	// else if board was initialized
+       	else {
+			$board = unserialize($match->board_state);
+       	}
 
 		$col = $this->input->post('col');
-		echo "<script type='text/javascript'>alert('{$product_id}');</script>";
+       	echo "<pre>";
+       	die(print_r($col, TRUE));
+       	array_push($board[$col], $user->id);
+		//echo "<script type='text/javascript'>alert('{$col}');</script>";
 		
-		// insert move into board, insert into db
-		array_push($board[$col], $user->id);
-
-
+		$this->match_model->updateBoard($match, $board);
+		
 		// 7:   number of columns (nested arrays)
 		// > 6: number needed for a win
 		$count = count($board, COUNT_RECURSIVE);
 		if ($count > 13) {
-			$this->load->model('match_model');
 
 			// check for win
 			$win = $this->match_model->win($board, $col);
